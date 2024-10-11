@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pikachu Matching Game - 3x4 Grid</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c1a10;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #game-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #side-panel {
+            color: yellow;
+            text-align: center;
+            margin-right: 30px;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 80px); /* 4 columns */
+            grid-template-rows: repeat(3, 80px); /* 3 rows */
+            gap: 5px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+        }
+
+        .card {
+            width: 80px;
+            height: 80px;
+            background-color: #fff;
+            border: 1px solid #999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        .card.flipped img {
+            display: block;
+        }
+
+        .card.matched {
+            visibility: hidden;
+        }
+
+        #side-panel h1, #side-panel h2 {
+            margin: 10px 0;
+        }
+
+        #side-panel .score, #side-panel .moves {
+            font-size: 24px;
+            margin: 5px 0;
+        }
+
+        #side-panel .reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: yellow;
+            color: black;
+            cursor: pointer;
+            border: none;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Side Panel -->
+    <div id="side-panel">
+        <h2>Moves: <span class="moves">0</span></h2>
+        <h2>Score: <span class="score">0</span></h2>
+        <button class="reset" onclick="resetGame()">Reset</button>
+    </div>
+
+    <!-- Game Board -->
+    <div id="game-board"></div>
+</div>
+
+<script>
+    const images = [
+        'images/img1.jpg', 'images/img1.jpg',
+        'images/img2.jpg', 'images/img2.jpg',
+        'images/img3.jpg', 'images/img3.jpg',
+        'images/img4.jpg', 'images/img4.jpg',
+        'images/img5.jpg', 'images/img5.jpg',
+        'images/img6.jpg', 'images/img6.jpg'
+    ];
+
+    let gameBoard = document.getElementById('game-board');
+    let flippedCards = [];
+    let matchedCount = 0;
+    let moves = 0;
+    let score = 0;
+    let boardLocked = false;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function createBoard() {
+        shuffle(images);
+        images.forEach((image, index) => {
+            let card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.image = image;
+
+            let img = document.createElement('img');
+            img.src = image;
+
+            card.appendChild(img);
+            gameBoard.appendChild(card);
+
+            card.addEventListener('click', () => flipCard(card));
+        });
+    }
+
+    function flipCard(card) {
+        if (boardLocked || card.classList.contains('flipped') || card.classList.contains('matched')) {
+            return;
+        }
+
+        card.classList.add('flipped');
+        flippedCards.push(card);
+
+        if (flippedCards.length === 2) {
+            checkMatch();
+        }
+    }
+
+    function checkMatch() {
+        const [card1, card2] = flippedCards;
+
+        if (card1.dataset.image === card2.dataset.image) {
+            boardLocked = true;
+            setTimeout(() => {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedCount += 2;
+                score += 10; // Increase score by 10 for each match
+                document.querySelector('.score').textContent = score;
+
+                boardLocked = false;
+
+                if (matchedCount === images.length) {
+                    setTimeout(() => alert('You win!'), 500);
+                }
+            }, 500); // Delay of 500ms before matched cards disappear
+        } else {
+            boardLocked = true;
+            setTimeout(() => {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+                boardLocked = false;
+            }, 500); // Delay of 500ms for non-matching cards to flip back
+        }
+
+        moves += 1; // Increment moves count
+        document.querySelector('.moves').textContent = moves;
+        flippedCards = [];
+    }
+
+    function resetGame() {
+        gameBoard.innerHTML = ''; // Clear the board
+        flippedCards = [];
+        matchedCount = 0;
+        moves = 0;
+        score = 0;
+        document.querySelector('.moves').textContent = moves;
+        document.querySelector('.score').textContent = score;
+        createBoard(); // Recreate the board
+    }
+
+    createBoard();
+</script>
+
+</body>
+</html>
