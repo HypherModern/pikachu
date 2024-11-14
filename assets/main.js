@@ -1,10 +1,10 @@
 const images = [
-  'images/img1.jpg', 'images/img1.jpg',
-  'images/img2.jpg', 'images/img2.jpg',
-  'images/img3.jpg', 'images/img3.jpg',
-  'images/img4.jpg', 'images/img4.jpg',
-  'images/img5.jpg', 'images/img5.jpg',
-  'images/img6.jpg', 'images/img6.jpg'
+  'assets/images/pieces1.png', 'assets/images/pieces1.png',
+  'assets/images/pieces2.png', 'assets/images/pieces2.png',
+  'assets/images/pieces3.png', 'assets/images/pieces3.png',
+  'assets/images/pieces4.png', 'assets/images/pieces4.png',
+  'assets/images/pieces5.png', 'assets/images/pieces5.png',
+  'assets/images/pieces6.png', 'assets/images/pieces6.png'
 ];
 
 let gameBoard = document.getElementById('game-board');
@@ -94,5 +94,11 @@ function resetGame() {
   document.querySelector('.score').textContent = score;
   createBoard(); // Recreate the board
 }
+function showMessage(buttonName){
+  alert(`Bạn đang bấm vào nút ${buttonName}`);
+}
+document.getElementById("Reset").addEventListener("click", function(){
+  showMessage("Reset");
+});
 
 createBoard();
