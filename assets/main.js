@@ -28,7 +28,7 @@ function createBoard() {
       let card = document.createElement('div');
       card.classList.add('card');
       card.dataset.image = image;
-
+  
       let img = document.createElement('img');
       img.src = image;
 
